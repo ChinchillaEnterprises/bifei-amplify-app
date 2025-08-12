@@ -4,24 +4,26 @@ export default function Home() {
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
+        <h1 className="text-4xl font-bold mb-4">Welcome to Bifei's First Amplify App!</h1>
+        <p className="text-lg mb-4">Built with Next.js and AWS Amplify at Chinchilla Academy</p>
+        
+        <div className="bg-blue-100 dark:bg-blue-900 p-6 rounded-lg mb-6">
+          <h2 className="text-2xl font-semibold mb-2">Your App is Live!</h2>
+          <p className="mb-2">✅ Local Development: Running on port 3000</p>
+          <p className="mb-2">✅ AWS Deployment: In progress</p>
+          <p>✅ GitHub Repository: Connected and syncing</p>
+        </div>
+
         <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
           <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
+            This is your homepage - edit{" "}
             <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
               app/page.tsx
             </code>
-            .
+            {" "}to customize it
           </li>
           <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
+            Save and see your changes instantly in the browser!
           </li>
         </ol>
 
