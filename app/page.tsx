@@ -24,6 +24,7 @@ export default function Home() {
             <div className="hidden md:flex items-center space-x-8">
               <Link href="/" className="text-white hover:text-gold transition">Home</Link>
               <Link href="/menu" className="text-white hover:text-gold transition">Menu</Link>
+              <Link href="/delivery" className="text-white hover:text-gold transition">Delivery</Link>
               <Link href="/reservation" className="text-white hover:text-gold transition">Reservation</Link>
               <Link href="/location" className="text-white hover:text-gold transition">Location</Link>
               <Link href="/login" className="bg-gold text-red-900 px-4 py-2 rounded-lg hover:bg-yellow-400 transition font-semibold">
@@ -55,6 +56,7 @@ export default function Home() {
             <div className="px-2 pt-2 pb-3 space-y-1">
               <Link href="/" className="block px-3 py-2 text-white hover:text-gold">Home</Link>
               <Link href="/menu" className="block px-3 py-2 text-white hover:text-gold">Menu</Link>
+              <Link href="/delivery" className="block px-3 py-2 text-white hover:text-gold">Delivery</Link>
               <Link href="/reservation" className="block px-3 py-2 text-white hover:text-gold">Reservation</Link>
               <Link href="/location" className="block px-3 py-2 text-white hover:text-gold">Location</Link>
               <Link href="/login" className="block px-3 py-2 text-white hover:text-gold">Login</Link>
@@ -65,6 +67,12 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1555126634-323283e090fa?q=80&w=2070&auto=format&fit=crop')`,
+          }}
+        ></div>
         <div className="absolute inset-0 bg-gradient-to-r from-red-900/90 to-red-700/90"></div>
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-6xl font-bold mb-4 animate-fade-in">
