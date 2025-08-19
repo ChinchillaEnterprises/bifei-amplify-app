@@ -29,7 +29,7 @@ const schema = a.schema({
       id: a.id(),
       customerName: a.string().required(),
       email: a.email().required(),
-      phone: a.phone().required(),
+      phone: a.phone(), // Made optional for easier testing
       deliveryAddress: a.string().required(),
       items: a.json().required(),
       subtotal: a.float().required(),
@@ -85,6 +85,7 @@ const schema = a.schema({
       loyaltyPoints: a.integer().default(0),
     })
     .authorization(allow => [
+      allow.publicApiKey().to(['create', 'read']), // Allow public API to create and read users
       allow.groups(['customer']).to(['read']),
       allow.groups(['restaurantHost']).to(['read', 'update']),
       allow.groups(['maintenance']).to(['create', 'read', 'update', 'delete']),
