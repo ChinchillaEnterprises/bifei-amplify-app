@@ -35,9 +35,12 @@ export default function RestaurantHostDashboard() {
   // Fetch data when component mounts
   useEffect(() => {
     if (user && (isInGroup('restaurantHost') || isInGroup('maintenance'))) {
+      console.log('User authenticated, fetching data...');
+      console.log('User groups:', userGroups);
       fetchAllData();
       // Set up real-time subscriptions
-      setupSubscriptions();
+      const cleanup = setupSubscriptions();
+      return cleanup;
     }
   }, [user]);
 
@@ -99,7 +102,11 @@ export default function RestaurantHostDashboard() {
 
   const fetchOrders = async () => {
     try {
-      const { data } = await client.models.Order.list();
+      console.log('Fetching orders...');
+      const response = await client.models.Order.list();
+      console.log('Orders response:', response);
+      
+      const data = response.data;
       setOrders(data || []);
       
       // Calculate active orders and today's revenue
@@ -123,7 +130,11 @@ export default function RestaurantHostDashboard() {
 
   const fetchMembers = async () => {
     try {
-      const { data } = await client.models.User.list();
+      console.log('Fetching members...');
+      const response = await client.models.User.list();
+      console.log('Members response:', response);
+      
+      const data = response.data;
       setMembers(data || []);
       setStats(prev => ({ ...prev, totalMembers: data?.length || 0 }));
     } catch (error) {

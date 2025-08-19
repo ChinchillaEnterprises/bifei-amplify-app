@@ -3,8 +3,8 @@ import { Amplify } from 'aws-amplify';
 import type { Schema } from '../../amplify/data/resource';
 import outputs from '../../amplify_outputs.json';
 
-// Ensure Amplify is configured before creating the client
-if (typeof window !== 'undefined') {
+// Configure Amplify if not already configured
+if (typeof window !== 'undefined' && !Amplify.getConfig().API) {
   Amplify.configure(outputs);
 }
 
