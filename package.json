@@ -20,7 +20,7 @@
     "@aws-amplify/backend-cli": "^1.8.0",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^20.19.11",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "aws-cdk-lib": "^2.204.0",
@@ -29,7 +29,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.4.5",
     "tailwindcss": "^4",
-    "tsx": "^4.20.3",
+    "tsx": "^4.20.4",
     "typescript": "^5.8.3"
   }
 }

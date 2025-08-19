@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import Navigation from '../components/Navigation';
+import { client } from '../utils/amplify-client';
+import { useAuth } from '../providers/AuthProvider';
 
 export default function Reservation() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -30,20 +32,47 @@ export default function Reservation() {
     setIsSubmitting(true);
     setSubmitMessage('');
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Create reservation in DynamoDB
+      const reservationData = {
+        customerName: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        date: formData.date,
+        time: formData.time,
+        numberOfGuests: parseInt(formData.guests) || 2,
+        specialRequests: formData.specialRequests || null,
+        status: 'pending',
+        userId: user?.userId || 'guest', // Use logged in user ID or 'guest'
+      };
+      
+      console.log('Creating reservation with data:', reservationData);
+      
+      const { data: reservation, errors } = await client.models.Reservation.create(reservationData);
+      
+      console.log('Reservation response:', reservation);
+      console.log('Errors (if any):', errors);
+
+      if (reservation) {
+        console.log('Reservation created successfully with ID:', reservation.id);
+        setSubmitMessage('Reservation submitted successfully! We will contact you soon to confirm.');
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          date: '',
+          time: '',
+          guests: '2',
+          specialRequests: ''
+        });
+      }
+    } catch (error) {
+      console.error('Error creating reservation:', error);
+      setSubmitMessage('Sorry, there was an error submitting your reservation. Please try again or call us directly.');
+    } finally {
       setIsSubmitting(false);
-      setSubmitMessage('Reservation submitted successfully! We will contact you soon to confirm.');
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        date: '',
-        time: '',
-        guests: '2',
-        specialRequests: ''
-      });
-    }, 2000);
+    }
   };
 
   // Generate time slots
@@ -58,60 +87,7 @@ export default function Reservation() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-50 to-white">
-      {/* Navigation */}
-      <nav className="bg-red-800 shadow-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-2">
-                <span className="text-2xl font-bold text-gold">🥟</span>
-                <span className="text-xl font-bold text-white">Golden Dragon</span>
-                <span className="text-sm text-gold ml-2">金龙餐厅</span>
-              </Link>
-            </div>
-            
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-white hover:text-gold transition">Home</Link>
-              <Link href="/menu" className="text-white hover:text-gold transition">Menu</Link>
-              <Link href="/reservation" className="text-gold">Reservation</Link>
-              <Link href="/location" className="text-white hover:text-gold transition">Location</Link>
-              <Link href="/login" className="bg-gold text-red-900 px-4 py-2 rounded-lg hover:bg-yellow-400 transition font-semibold">
-                Login
-              </Link>
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden flex items-center">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-white hover:text-gold focus:outline-none"
-              >
-                <svg className="h-6 w-6" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                  {isMenuOpen ? (
-                    <path d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                    <path d="M4 6h16M4 12h16M4 18h16" />
-                  )}
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-red-700">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              <Link href="/" className="block px-3 py-2 text-white hover:text-gold">Home</Link>
-              <Link href="/menu" className="block px-3 py-2 text-white hover:text-gold">Menu</Link>
-              <Link href="/reservation" className="block px-3 py-2 text-gold">Reservation</Link>
-              <Link href="/location" className="block px-3 py-2 text-white hover:text-gold">Location</Link>
-              <Link href="/login" className="block px-3 py-2 text-white hover:text-gold">Login</Link>
-            </div>
-          </div>
-        )}
-      </nav>
+      <Navigation />
 
       {/* Reservation Header */}
       <section className="bg-gradient-to-r from-red-900 to-red-700 text-white py-16">
@@ -132,7 +108,11 @@ export default function Reservation() {
                 <h2 className="text-2xl font-bold text-red-900 mb-6">Reserve Your Table</h2>
                 
                 {submitMessage && (
-                  <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                  <div className={`mb-6 p-4 rounded-lg ${
+                    submitMessage.includes('error') || submitMessage.includes('Sorry') 
+                      ? 'bg-red-100 border border-red-400 text-red-700' 
+                      : 'bg-green-100 border border-green-400 text-green-700'
+                  }`}>
                     {submitMessage}
                   </div>
                 )}

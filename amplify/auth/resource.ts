@@ -13,5 +13,14 @@ export const auth = defineAuth({
       mutable: true,
       required: false,
     },
+    profilePicture: {
+      mutable: true,
+      required: false,
+    },
   },
+  groups: [
+    'customer',
+    'restaurantHost', 
+    'maintenance'
+  ],
 });

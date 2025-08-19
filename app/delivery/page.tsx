@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import Navigation from '../components/Navigation';
+import { useRouter } from 'next/navigation';
+import './delivery.css';
 
 interface CartItem {
   id: number;
@@ -15,9 +17,12 @@ interface CartItem {
 }
 
 export default function Delivery() {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [animatingItems, setAnimatingItems] = useState<Set<number>>(new Set());
+  const [cartButtonAnimating, setCartButtonAnimating] = useState(false);
 
   const menuCategories = {
     all: 'All Items',
@@ -82,7 +87,41 @@ export default function Delivery() {
     ? menuItems 
     : menuItems.filter(item => item.category === selectedCategory);
 
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem('goldenDragonCart');
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
+  }, []);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    if (cart.length > 0) {
+      localStorage.setItem('goldenDragonCart', JSON.stringify(cart));
+    } else {
+      localStorage.removeItem('goldenDragonCart');
+    }
+  }, [cart]);
+
   const addToCart = (item: Omit<CartItem, 'quantity'>) => {
+    // Trigger animation for this item
+    setAnimatingItems(prev => new Set(prev).add(item.id));
+    setCartButtonAnimating(true);
+    
+    // Remove animation after duration
+    setTimeout(() => {
+      setAnimatingItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(item.id);
+        return newSet;
+      });
+    }, 600);
+    
+    setTimeout(() => {
+      setCartButtonAnimating(false);
+    }, 400);
+
     const existingItem = cart.find(cartItem => cartItem.id === item.id);
     if (existingItem) {
       setCart(cart.map(cartItem => 
@@ -93,6 +132,9 @@ export default function Delivery() {
     } else {
       setCart([...cart, { ...item, quantity: 1 }]);
     }
+    
+    // Open cart drawer when item is added
+    setIsCartOpen(true);
   };
 
   const removeFromCart = (itemId: number) => {
@@ -119,34 +161,31 @@ export default function Delivery() {
     return cart.reduce((total, item) => total + item.quantity, 0);
   };
 
+  const handleCheckout = () => {
+    if (cart.length > 0) {
+      router.push('/checkout');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-50 to-white">
-      {/* Navigation */}
-      <nav className="bg-red-800 shadow-lg sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-2">
-                <span className="text-2xl font-bold text-gold">🥟</span>
-                <span className="text-xl font-bold text-white">Golden Dragon</span>
-                <span className="text-sm text-gold ml-2">金龙餐厅</span>
-              </Link>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <Link href="/" className="text-white hover:text-gold transition">Back to Home</Link>
-              <button
-                onClick={() => setIsCartOpen(!isCartOpen)}
-                className="bg-gold text-red-900 px-4 py-2 rounded-lg hover:bg-yellow-400 transition font-semibold flex items-center space-x-2"
-              >
-                <span>🛒</span>
-                <span>Cart ({getTotalItems()})</span>
-                <span>${getTotalPrice()}</span>
-              </button>
-            </div>
-          </div>
+      <div className="relative">
+        <Navigation />
+        
+        {/* Cart Button Overlay */}
+        <div className="absolute top-0 right-0 h-16 flex items-center pr-4 sm:pr-6 lg:pr-8 z-50">
+          <button
+            onClick={() => setIsCartOpen(!isCartOpen)}
+            className={`bg-gold text-red-900 px-4 py-2 rounded-lg hover:bg-yellow-400 transition-all font-semibold flex items-center space-x-2 ${
+              cartButtonAnimating ? 'animate-bounce scale-110' : ''
+            }`}
+          >
+            <span className={cartButtonAnimating ? 'animate-spin' : ''}>🛒</span>
+            <span>Cart ({getTotalItems()})</span>
+            <span>${getTotalPrice()}</span>
+          </button>
         </div>
-      </nav>
+      </div>
 
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-red-800 to-red-600 text-white py-16 px-4">
@@ -208,9 +247,15 @@ export default function Delivery() {
                   </div>
                   <button
                     onClick={() => addToCart(item)}
-                    className="w-full bg-red-800 text-white py-2 rounded-lg hover:bg-red-700 transition font-semibold"
+                    className={`w-full bg-red-800 text-white py-2 rounded-lg hover:bg-red-700 transition-all font-semibold relative overflow-hidden ${
+                      animatingItems.has(item.id) ? 'animate-pulse scale-105' : ''
+                    }`}
                   >
-                    Add to Cart
+                    <span className={`inline-block ${
+                      animatingItems.has(item.id) ? 'animate-bounce' : ''
+                    }`}>
+                      {animatingItems.has(item.id) ? '✅ Added!' : 'Add to Cart'}
+                    </span>
                   </button>
                 </div>
               ))}
@@ -275,7 +320,10 @@ export default function Delivery() {
                       </div>
                     </div>
 
-                    <button className="w-full bg-gold text-red-900 py-3 rounded-lg font-bold text-lg hover:bg-yellow-400 transition mt-6">
+                    <button 
+                      onClick={handleCheckout}
+                      className="w-full bg-gold text-red-900 py-3 rounded-lg font-bold text-lg hover:bg-yellow-400 transition-all mt-6 transform hover:scale-105"
+                    >
                       Proceed to Checkout
                     </button>
                   </>
