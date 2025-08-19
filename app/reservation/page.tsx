@@ -42,7 +42,7 @@ export default function Reservation() {
         time: formData.time,
         numberOfGuests: parseInt(formData.guests) || 2,
         specialRequests: formData.specialRequests || null,
-        status: 'pending',
+        status: 'pending' as const,
         userId: user?.userId || 'guest', // Use logged in user ID or 'guest'
       };
       

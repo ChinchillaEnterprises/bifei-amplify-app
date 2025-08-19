@@ -10,7 +10,7 @@ import { useAuth } from '../providers/AuthProvider';
 export default function Checkout() {
   const router = useRouter();
   const { user } = useAuth();
-  const [cart, setCart] = useState<any[]>([]);
+  const [cart, setCart] = useState<Array<{id: number; name: string; nameZh?: string; price: number; quantity: number}>>([]);
   const [orderForm, setOrderForm] = useState({
     name: '',
     phone: '',
@@ -94,11 +94,7 @@ export default function Checkout() {
         deliveryFee: getDeliveryFee(),
         total: getTotal(),
         specialInstructions: orderForm.instructions || null,
-        status: 'pending',
-        userId: user?.userId || 'guest',
-        orderType: 'delivery',
-        paymentMethod: 'card',
-        estimatedDeliveryTime: '30-45 minutes'
+        userId: user?.userId || 'guest'
       });
 
       if (order) {

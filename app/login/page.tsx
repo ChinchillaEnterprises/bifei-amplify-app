@@ -165,7 +165,7 @@ export default function Login() {
                           <span className="text-3xl text-white">👤</span>
                         </div>
                         <h1 className="text-2xl font-bold text-red-900 mb-2">
-                          Welcome, {user?.attributes?.preferred_username || user?.signInDetails?.loginId?.split('@')[0]}!
+                          Welcome, {user?.signInDetails?.loginId?.split('@')[0] || 'User'}!
                         </h1>
                         <p className="text-gray-600">
                           You are now signed in to Golden Dragon
@@ -228,16 +228,11 @@ export default function Login() {
                               <span className="font-medium">Email:</span>
                               <span>{user?.signInDetails?.loginId}</span>
                             </div>
-                            {user?.attributes?.preferred_username && (
-                              <div className="flex justify-between">
-                                <span className="font-medium">Name:</span>
-                                <span>{user.attributes.preferred_username}</span>
-                              </div>
-                            )}
-                            {user?.attributes?.phone_number && (
+                            {/* Additional user attributes can be displayed here */}
+                            {false && (
                               <div className="flex justify-between">
                                 <span className="font-medium">Phone:</span>
-                                <span>{user.attributes.phone_number}</span>
+                                <span>N/A</span>
                               </div>
                             )}
                             <div className="flex justify-between">

@@ -44,8 +44,8 @@ export default function SignUp() {
       if (nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
         setIsConfirming(true);
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to sign up');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to sign up');
     } finally {
       setLoading(false);
     }
@@ -80,8 +80,8 @@ export default function SignUp() {
         
         router.push('/');
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to confirm sign up');
+    } catch (err: unknown) {
+      setError((err as Error).message || 'Failed to confirm sign up');
     } finally {
       setLoading(false);
     }
@@ -176,7 +176,7 @@ export default function SignUp() {
             ) : (
               <form onSubmit={handleConfirm} className="space-y-4">
                 <p className="text-gray-600 mb-4">
-                  We've sent a confirmation code to {email}. Please enter it below.
+                  We&apos;ve sent a confirmation code to {email}. Please enter it below.
                 </p>
 
                 <div>

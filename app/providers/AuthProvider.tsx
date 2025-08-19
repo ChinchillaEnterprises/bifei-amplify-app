@@ -5,8 +5,8 @@ import { Hub } from 'aws-amplify/utils';
 import { getCurrentUser, signOut, fetchUserAttributes, fetchAuthSession } from 'aws-amplify/auth';
 
 interface AuthContextType {
-  user: any;
-  userAttributes: any;
+  user: {userId: string; username: string; signInDetails?: {loginId?: string}} | null;
+  userAttributes: Record<string, string> | null;
   userGroups: string[];
   loading: boolean;
   checkUser: () => Promise<void>;
@@ -27,8 +27,8 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => useContext(AuthContext);
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any>(null);
-  const [userAttributes, setUserAttributes] = useState<any>(null);
+  const [user, setUser] = useState<{userId: string; username: string; signInDetails?: {loginId?: string}} | null>(null);
+  const [userAttributes, setUserAttributes] = useState<Record<string, string> | null>(null);
   const [userGroups, setUserGroups] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,7 +40,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       // Fetch user attributes
       try {
         const attributes = await fetchUserAttributes();
-        setUserAttributes(attributes);
+        setUserAttributes(attributes as Record<string, string>);
       } catch (err) {
         console.log('Could not fetch attributes:', err);
       }

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navigation from '../../components/Navigation';
 import { useAuth } from '../../providers/AuthProvider';
-import Link from 'next/link';
 import { client, type Reservation, type Order, type User, type ReservationStatus, type OrderStatus } from '../../utils/amplify-client';
 
 export default function RestaurantHostDashboard() {
@@ -73,7 +72,7 @@ export default function RestaurantHostDashboard() {
       
       if (response.errors && response.errors.length > 0) {
         console.error('GraphQL errors:', response.errors);
-        response.errors.forEach((err: any) => {
+        response.errors.forEach((err: unknown) => {
           console.error('Error detail:', err);
         });
       }
@@ -243,7 +242,7 @@ export default function RestaurantHostDashboard() {
         <div className="grid md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="text-3xl mb-2">📅</div>
-            <h3 className="text-lg font-semibold text-gray-900">Today's Reservations</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Today&apos;s Reservations</h3>
             <p className="text-3xl font-bold text-red-900 mt-2">{stats.todayReservations}</p>
           </div>
           <div className="bg-white rounded-lg shadow-lg p-6">
@@ -258,7 +257,7 @@ export default function RestaurantHostDashboard() {
           </div>
           <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="text-3xl mb-2">💰</div>
-            <h3 className="text-lg font-semibold text-gray-900">Today's Revenue</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Today&apos;s Revenue</h3>
             <p className="text-3xl font-bold text-red-900 mt-2">${stats.todayRevenue.toFixed(2)}</p>
           </div>
         </div>
@@ -355,13 +354,13 @@ export default function RestaurantHostDashboard() {
                                   {reservation.status === 'pending' && (
                                     <div className="flex gap-2">
                                       <button
-                                        onClick={() => updateReservationStatus(reservation.id, 'confirmed')}
+                                        onClick={() => reservation.id && updateReservationStatus(reservation.id, 'confirmed')}
                                         className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
                                       >
                                         Confirm
                                       </button>
                                       <button
-                                        onClick={() => updateReservationStatus(reservation.id, 'cancelled')}
+                                        onClick={() => reservation.id && updateReservationStatus(reservation.id, 'cancelled')}
                                         className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
                                       >
                                         Cancel
@@ -405,7 +404,7 @@ export default function RestaurantHostDashboard() {
                           <tbody>
                             {orders.map(order => (
                               <tr key={order.id} className="border-b hover:bg-gray-50">
-                                <td className="py-3 px-4">#{order.id.slice(-8)}</td>
+                                <td className="py-3 px-4">#{order.id?.slice(-8) || 'N/A'}</td>
                                 <td className="py-3 px-4">
                                   <div>
                                     <p className="font-semibold">{order.customerName}</p>
@@ -429,7 +428,7 @@ export default function RestaurantHostDashboard() {
                                 <td className="py-3 px-4">
                                   <select
                                     value={order.status || 'pending'}
-                                    onChange={(e) => updateOrderStatus(order.id, e.target.value as OrderStatus)}
+                                    onChange={(e) => order.id && updateOrderStatus(order.id, e.target.value as OrderStatus)}
                                     className="border rounded px-2 py-1 text-sm"
                                   >
                                     <option value="pending">Pending</option>
