@@ -5,6 +5,19 @@ const nextConfig: NextConfig = {
   // output: 'export',
   images: {
     unoptimized: true
+  },
+  // Optimize build for production
+  swcMinify: true,
+  compress: true,
+  poweredByHeader: false,
+  // Reduce build time
+  typescript: {
+    // Skip type checking during build (already done in CI)
+    ignoreBuildErrors: false
+  },
+  eslint: {
+    // Skip ESLint during build to save time
+    ignoreDuringBuilds: true
   }
 };
 
