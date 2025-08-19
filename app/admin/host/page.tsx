@@ -51,6 +51,12 @@ export default function RestaurantHostDashboard() {
       ]);
     } catch (error) {
       console.error('Error fetching data:', error);
+      // Show more detailed error information
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      }
+      alert('Error loading data. Please check the console for details.');
     } finally {
       setLoadingData(false);
     }
@@ -59,9 +65,18 @@ export default function RestaurantHostDashboard() {
   const fetchReservations = async () => {
     try {
       console.log('Fetching reservations...');
-      const { data, errors } = await client.models.Reservation.list();
+      const response = await client.models.Reservation.list();
+      console.log('Full reservation response:', response);
+      
+      if (response.errors && response.errors.length > 0) {
+        console.error('GraphQL errors:', response.errors);
+        response.errors.forEach((err: any) => {
+          console.error('Error detail:', err);
+        });
+      }
+      
+      const data = response.data;
       console.log('Reservations fetched:', data);
-      console.log('Fetch errors (if any):', errors);
       
       setReservations(data || []);
       
@@ -71,6 +86,14 @@ export default function RestaurantHostDashboard() {
       setStats(prev => ({ ...prev, todayReservations: todayReservations.length }));
     } catch (error) {
       console.error('Error fetching reservations:', error);
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          message: error.message,
+          name: error.name,
+          stack: error.stack
+        });
+      }
+      throw error; // Re-throw to be caught by fetchAllData
     }
   };
 

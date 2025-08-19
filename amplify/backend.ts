@@ -1,20 +1,23 @@
 import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource.js';
 import { data } from './data/resource.js';
-import { reservationReminder } from './functions/reservation-reminder/resource.js';
-import { orderValidation } from './functions/order-validation/resource.js';
-import { Duration } from 'aws-cdk-lib';
-import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
-import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
-import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+// Lambda functions temporarily disabled for deployment
+// import { reservationReminder } from './functions/reservation-reminder/resource.js';
+// import { orderValidation } from './functions/order-validation/resource.js';
+// import { Duration } from 'aws-cdk-lib';
+// import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
+// import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+// import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 export const backend = defineBackend({
   auth,
   data,
-  reservationReminder,
-  orderValidation,
+  // reservationReminder,
+  // orderValidation,
 });
 
+// Lambda functions temporarily disabled for deployment
+/*
 // Grant permissions to Lambda functions
 backend.reservationReminder.resources.lambda.addToRolePolicy(
   new PolicyStatement({
@@ -73,3 +76,4 @@ backend.addOutput({
     orderValidationArn: backend.orderValidation.resources.lambda.functionArn,
   }
 });
+*/
