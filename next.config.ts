@@ -1,22 +1,23 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Static export for deployment
-  output: 'export',
+  // Remove static export for full-stack Amplify deployment
+  // output: 'export',  // Disabled for dynamic deployment
   images: {
     unoptimized: true
   },
-  // Disable features that slow down build
-  compress: false,
+  // Enable build optimizations for production
+  compress: true,
   poweredByHeader: false,
-  // Skip all checks during build
+  // Enable TypeScript and ESLint checks
   typescript: {
-    ignoreBuildErrors: true
+    ignoreBuildErrors: false
   },
   eslint: {
-    ignoreDuringBuilds: true
+    ignoreDuringBuilds: false
   },
-  // No experimental features needed
+  // Allow cross-origin requests for development
+  allowedDevOrigins: ['10.0.0.131'],
 };
 
 export default nextConfig;

@@ -3,6 +3,12 @@
 
 echo "Starting optimized production build..."
 
+# Check if amplify_outputs.json exists
+if [[ ! -f "amplify_outputs.json" ]]; then
+  echo "Error: amplify_outputs.json not found. This file is required for the build."
+  exit 1
+fi
+
 # Backup original package.json
 cp package.json package.backup.json
 
