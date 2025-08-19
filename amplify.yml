@@ -3,10 +3,20 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        - echo "Starting optimized production build..."
+        # Backup original package.json
+        - cp package.json package.backup.json
+        # Use production package.json with minimal dependencies
+        - cp package.prod.json package.json
+        # Install production dependencies only
+        - npm install --production --no-audit --no-fund
     build:
       commands:
         - npm run build
+    postBuild:
+      commands:
+        # Restore original package.json for future builds
+        - cp package.backup.json package.json
   artifacts:
     baseDirectory: out
     files:
