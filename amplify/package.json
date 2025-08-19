@@ -1,5 +1,8 @@
 {
   "name": "amplify-backend",
   "type": "module",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "aws-cdk-lib": "^2.204.0"
+  }
 }
